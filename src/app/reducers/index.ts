@@ -3,8 +3,7 @@ import {
   ActionReducer,
   ActionReducerMap,
   createFeatureSelector,
-  createSelector,
-  MetaReducer
+  createSelector
 } from '@ngrx/store';
 import { environment } from '../../environments/environment';
 
@@ -29,9 +28,12 @@ const countReducer: ActionReducer<CountState, Action> = (featureState, action) =
   return { ...featureState, current };
 };
 
+// all global REDUCER
 export const reducers: ActionReducerMap<State> = {
   countState: countReducer
 };
 
+// Selectors -> first select feature, then state properties
 
-export const metaReducers: MetaReducer<State>[] = !environment.production ? [] : [];
+export const selectCountState = createFeatureSelector<CountState>('countState');
+export const selectCurrentCounter = createSelector(selectCountState, state => state.current);

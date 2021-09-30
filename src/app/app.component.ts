@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { State } from './reducers';
+import { selectCurrentCounter, State } from './reducers';
 
 @Component({
   selector: 'fin-root',
@@ -38,7 +38,7 @@ import { State } from './reducers';
   styles: []
 })
 export class AppComponent {
-  currentCount$ = this.store.select(state => state.countState.current);
+  currentCount$ = this.store.select(selectCurrentCounter);
   constructor(private readonly store: Store<State>) {}
   increaseCount() { this.store.dispatch({ type: '+' }); }
   decreaseCount() { this.store.dispatch({ type: '-' }); }
