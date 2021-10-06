@@ -1,3 +1,4 @@
+import { Update } from "@ngrx/entity";
 import { Action, createAction, props } from "@ngrx/store";
 import { Pizza } from "./reducer";
 
@@ -16,8 +17,8 @@ export enum PizzaAction {
     DELETE = '[Pizza] DELETE',
 }
 
-export const create = createAction(PizzaAction.CREATE, props<PizzaActionPayload>());
+export const create = createAction(PizzaAction.CREATE, props<Pizza>());
 export const read = createAction(PizzaAction.READ);
 export const readSuccess = createAction(PizzaAction.READ_SUCCESS, props<{ list: Pizza[] }>());
-export const update = createAction(PizzaAction.UPDATE, props<PizzaActionPayload>());
-export const remove = createAction(PizzaAction.DELETE, props<PizzaActionPayload>());
+export const update = createAction(PizzaAction.UPDATE, props<Update<Pizza>>());
+export const remove = createAction(PizzaAction.DELETE, props<Pizza>());

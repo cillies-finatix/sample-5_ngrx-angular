@@ -1,3 +1,4 @@
+import { createEntityAdapter, EntityAdapter, EntityState } from "@ngrx/entity";
 import {
   Action,
   createReducer,
@@ -5,10 +6,7 @@ import {
 } from "@ngrx/store";
 import * as fromPizzaActions from "./actions";
 
-// Feature states
-export interface PizzaState {
-  list: Pizza[];
-}
+export interface PizzaState extends EntityState<Pizza> {}
 
 export interface Pizza {
   id: number;
@@ -17,46 +15,21 @@ export interface Pizza {
   ingridients: string[];
 }
 
+export function pizzaSorter(a: Pizza, b: Pizza): number {
+  return a.name.localeCompare(b.name);
+}
+
+export const adapter: EntityAdapter<Pizza> = createEntityAdapter<Pizza>({
+  selectId: pizza => pizza.id,
+  sortComparer: pizzaSorter
+});
+
 const pizzaReducer = createReducer<PizzaState>(
-  { list: [] },
-  on(fromPizzaActions.create, (state, action) => ({
-    ...state,
-    list: [
-      ...state.list,
-      {
-        id: generateId(),
-        name: action.name ?? "Unbekannt",
-        price: action.price ?? Infinity,
-        ingridients: action.ingridients ?? [],
-      },
-    ],
-  })),
-  on(fromPizzaActions.readSuccess, (state, action) => ({
-    ...state,
-    list: [...action.list],
-  })),
-  on(fromPizzaActions.update, (state, action) => {
-    const pizzaIndex = state.list.findIndex((p) => p.id === action.id);
-    if (pizzaIndex > -1) {
-      const pizza = state.list[pizzaIndex];
-      return {
-        ...state,
-        list: [
-          ...state.list.slice(0, pizzaIndex),
-          {
-            ...pizza,
-            ...action,
-          },
-          ...state.list.slice(pizzaIndex + 1),
-        ],
-      };
-    }
-    return state;
-  }),
-  on(fromPizzaActions.remove, (state, { id }) => ({
-    ...state,
-    list: state.list.filter((p: Pizza) => p.id !== id),
-  }))
+  adapter.getInitialState(),
+  on(fromPizzaActions.create, (state, action) => adapter.addOne({...action, id: generateId() }, state)),
+  on(fromPizzaActions.readSuccess, (state, action) => adapter.setAll(action.list, state)),
+  on(fromPizzaActions.update, (state, action) => adapter.updateOne(action, state)),
+  on(fromPizzaActions.remove, (state, { id }) => adapter.removeOne(id, state))
 );
 
 export function reducer(state: PizzaState | undefined, action: Action) {

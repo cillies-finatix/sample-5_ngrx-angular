@@ -1,13 +1,17 @@
-
+import { PizzaState } from './reducer';
 // Selectors -> first select feature, then state properties
 
-import { createFeatureSelector, createSelector } from "@ngrx/store";
+import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { selectRouteParam } from "../router";
-import { PizzaState } from "./reducer";
+import { adapter } from "./reducer";
 
-export const selectPizza = createFeatureSelector<PizzaState>('pizza');
-export const selectAllPizza = createSelector(selectPizza, state => state.list);
+// get the selectors
+const { selectAll } = adapter.getSelectors();
+
+export const selectPizzaFeature = createFeatureSelector<PizzaState>('pizza');
+export const selectAllPizza = createSelector(selectPizzaFeature, selectAll);
 export const selectCurrentPizza = createSelector(
-    selectAllPizza, 
-    selectRouteParam('pizzaId'), 
-    (list, pizzaId) => list.find(p => p.id === Number(pizzaId)));
+  selectAllPizza,
+  selectRouteParam("pizzaId"),
+  (list, pizzaId) => list.find((p) => p.id === Number(pizzaId))
+);
