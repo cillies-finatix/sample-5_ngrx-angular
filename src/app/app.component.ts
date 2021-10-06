@@ -40,9 +40,11 @@ import { selectAllPizza } from './reducers/index';
           - 
           <em>{{ pizza.price | currency }}</em>
           
-          - mit 
-          <span>{{pizza.ingridients.length}}</span>
-          Zutaten -
+          -
+          <a (click)="showIngridients(pizza)">
+          mit {{pizza.ingridients.length}} Zutaten
+          </a>
+          -
           <a role="button" (click)="removePizza(pizza)">Entferne Pizza aus Sortiment</a>
         </li>
       </ul>
@@ -84,5 +86,9 @@ export class AppComponent {
         name: newName,
       });
     }
+  }
+
+  showIngridients(pizza: Pizza): void {
+    alert("Pizzavoid-Zutaten: " + pizza.ingridients.join(', '));
   }
 }
