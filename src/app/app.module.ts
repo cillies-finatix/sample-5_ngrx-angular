@@ -3,20 +3,17 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { Store, StoreModule } from '@ngrx/store';
-import { reducers, State } from './reducers';
+import { Store } from '@ngrx/store';
+import { State } from './reducers';
 import { ReactiveFormsModule } from '@angular/forms';
-import { EffectsModule } from '@ngrx/effects';
-import { PizzaEffectService } from './pizza-effect.service';
+import * as fromPizzaActions from './reducers/pizza/actions';
+import { RootStoreModule } from './reducers/root-store.module';
 
 export function dispatchReadOnInit(store: Store<State>) {
   return () => {
-    store.dispatch({type: 'READ'});
+    store.dispatch(fromPizzaActions.read());
   };
 }
-
-
-
 @NgModule({
   declarations: [
     AppComponent
@@ -25,8 +22,7 @@ export function dispatchReadOnInit(store: Store<State>) {
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([PizzaEffectService])
+    RootStoreModule,
   ],
   providers: [
     {

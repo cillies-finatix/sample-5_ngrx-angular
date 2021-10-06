@@ -3,36 +3,37 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { from, of } from 'rxjs';
 import { map, mergeMap, switchMap } from 'rxjs/operators';
-import { Pizza, State } from './reducers';
-import { selectAllPizza } from './reducers/index';
+import { Pizza } from './reducer';
+import { selectAllPizza } from './selectors';
+import { State } from '../index';
+import * as fromPizzaActions from './actions';
 
 export const LOCAL_STORAGE_KEY = 'ngrx-pizzas';
 
 @Injectable()
 export class PizzaEffectService {
   read$ = createEffect(() => this.action$.pipe(
-    ofType('READ'),
+    ofType(fromPizzaActions.PizzaAction.READ),
     switchMap(() => from(this.readPizzas())),
-    map(list => ({
-      type: 'READ_SUCCESS',
+    map(list => fromPizzaActions.readSuccess({
       list,
     }))
   ));
 
   create$ = createEffect(() => this.action$.pipe(
-    ofType('CREATE'),
+    ofType(fromPizzaActions.PizzaAction.CREATE),
     mergeMap(() => this.store.select(selectAllPizza)),
     mergeMap((list) => from(this.savePizzas(list)))
   ), { dispatch: false });
 
   update$ = createEffect(() => this.action$.pipe(
-    ofType('UPDATE'),
+    ofType(fromPizzaActions.PizzaAction.UPDATE),
     mergeMap(() => this.store.select(selectAllPizza)),
     mergeMap((list) => from(this.savePizzas(list)))
   ), { dispatch: false });
 
   delete$ = createEffect(() => this.action$.pipe(
-    ofType('DELETE'),
+    ofType(fromPizzaActions.PizzaAction.DELETE),
     mergeMap(() => this.store.select(selectAllPizza)),
     mergeMap((list) => from(this.savePizzas(list)))
   ), { dispatch: false });
