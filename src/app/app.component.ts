@@ -1,4 +1,4 @@
-import { Component, TrackByFunction } from '@angular/core';
+import { ChangeDetectionStrategy, Component, TrackByFunction } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -8,32 +8,34 @@ import { selectAllPizza } from './reducers/index';
 @Component({
   selector: 'fin-root',
   template: `
-    <div style="text-align:center" class="content">
+    <div class="grid-container">
       <h1>
         Hallo Pizza Meister!
       </h1>
 
       <h2>Erstell' 'ne neue Pizza</h2>
-      <section>
-        <form [formGroup]="createPizzaForm" (ngSubmit)="createPizza()">
-          <input type="text" formControlName="name" />
-          <input type="number" formControlName="price" />
-          <select multiple="true" formControlName="ingridients">
-            <option value="Käse">Käse</option>
-            <option value="Salami">Salami</option>
-            <option value="Schinken">Schinken</option>
-            <option value="Ananas">Ananas</option>
-            <option value="Tomatensoße">Tomatensoße</option>
-          </select>
-          <button type="submit">Pizza erstellen</button>
+      <section class="grid-container">
+        <form class="grid-x grid-padding-x" [formGroup]="createPizzaForm" (ngSubmit)="createPizza()">
+          <div class="medium-6 cell"><label>Name der Pizza<input type="text" formControlName="name" /></label></div>
+          <div class="medium-6 cell"><label>Preis der Pizza<input type="number" formControlName="price"/></label></div>
+          <div class="medium-6 cell">
+            <label>Zutaten der Pizza:
+              <select multiple formControlName="ingridients">
+                <option *ngFor="let option of ingridientOptions" [value]="option">{{option}}</option>
+              </select>
+            </label>
+          </div>
+          <div class="medium-6 cell">
+            <button class="button success" type="submit">Pizza erstellen</button>
+          </div>
         </form>
-
-        <pre>{{createPizzaForm.value|json}}</pre>
       </section>
       
-      <p>Pizza-Sortiment:</p>
+      <h2>Pizza-Sortiment:</h2>
       <ul>
         <li *ngFor="let pizza of pizza$|async; trackBy: trackByName">
+          <img class="thumbnail" [src]="'https://img.pizza/150/64#'+randomStr()" alt="Pizza Pizza Pizza nomnomnom"> 
+
           <a (click)="updatePizza(pizza)">
             <strong>{{ pizza.name }}</strong>
           </a>
@@ -52,7 +54,8 @@ import { selectAllPizza } from './reducers/index';
     </div>
     <router-outlet></router-outlet>
   `,
-  styles: []
+  styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
   pizza$ = this.store.select(selectAllPizza);
@@ -61,6 +64,14 @@ export class AppComponent {
     price: this.fb.control(''),
     ingridients: this.fb.control([]),
   });
+
+  ingridientOptions = [
+    "Käse",
+    "Salami",
+    "Schinken",
+    "Ananas",
+    "Tomatensoße",
+  ];
   
   trackByName: TrackByFunction<Pizza> = (idx, item) => item.name;
   constructor(private readonly store: Store<State>, private readonly fb: FormBuilder) {}
@@ -89,6 +100,8 @@ export class AppComponent {
   }
 
   showIngridients(pizza: Pizza): void {
-    alert("Pizzavoid-Zutaten: " + pizza.ingridients.join(', '));
+    alert("Pizza-Zutaten: " + pizza.ingridients.join(', '));
   }
+
+  randomStr(): string { return Math.random().toString(32).substr(2); }
 }
