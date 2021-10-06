@@ -1,45 +1,88 @@
-import { Component } from '@angular/core';
+import { Component, TrackByFunction } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { selectCurrentCounter, State } from './reducers';
+import { Pizza, State } from './reducers';
+import { selectAllPizza } from './reducers/index';
 
 @Component({
   selector: 'fin-root',
   template: `
     <div style="text-align:center" class="content">
       <h1>
-        Current Count {{ currentCount$ | async }}!
+        Hallo Pizza Meister!
       </h1>
+
+      <h2>Erstell' 'ne neue Pizza</h2>
+      <section>
+        <form [formGroup]="createPizzaForm" (ngSubmit)="createPizza()">
+          <input type="text" formControlName="name" />
+          <input type="number" formControlName="price" />
+          <select multiple="true" formControlName="ingridients">
+            <option value="Käse">Käse</option>
+            <option value="Salami">Salami</option>
+            <option value="Schinken">Schinken</option>
+            <option value="Ananas">Ananas</option>
+            <option value="Tomatensoße">Tomatensoße</option>
+          </select>
+          <button type="submit">Pizza erstellen</button>
+        </form>
+
+        <pre>{{createPizzaForm.value|json}}</pre>
+      </section>
       
-      <p>Actions:</p>
+      <p>Pizza-Sortiment:</p>
       <ul>
-        <li><a (click)="increaseCount()">increase +</a></li>
-        <li><a (click)="decreaseCount()">decrease -</a></li>
+        <li *ngFor="let pizza of pizza$|async; trackBy: trackByName">
+          <a (click)="updatePizza(pizza)">
+            <strong>{{ pizza.name }}</strong>
+          </a>
+          - 
+          <em>{{ pizza.price | currency }}</em>
+          
+          - mit 
+          <span>{{pizza.ingridients.length}}</span>
+          Zutaten -
+          <a role="button" (click)="removePizza(pizza)">Entferne Pizza aus Sortiment</a>
+        </li>
       </ul>
       
-      <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
     </div>
-    <h2>Here are some links to help you start: </h2>
-    <ul>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://ngrx.io/guide/store/install">NgRx Installation</a></h2>
-      </li>
-    </ul>
     <router-outlet></router-outlet>
   `,
   styles: []
 })
 export class AppComponent {
-  currentCount$ = this.store.select(selectCurrentCounter);
-  constructor(private readonly store: Store<State>) {}
-  increaseCount() { this.store.dispatch({ type: '+' }); }
-  decreaseCount() { this.store.dispatch({ type: '-' }); }
+  pizza$ = this.store.select(selectAllPizza);
+  createPizzaForm = this.fb.group({
+    name: this.fb.control(''),
+    price: this.fb.control(''),
+    ingridients: this.fb.control([]),
+  });
+  
+  trackByName: TrackByFunction<Pizza> = (idx, item) => item.name;
+  constructor(private readonly store: Store<State>, private readonly fb: FormBuilder) {}
+
+  createPizza(): void {
+    this.store.dispatch({ type: 'CREATE', ...this.createPizzaForm.value });
+    this.createPizzaForm.reset();
+  }
+
+  removePizza(pizza: Pizza): void {
+    this.store.dispatch({
+      type: 'DELETE', 
+      ...pizza,
+    });
+  }
+
+  updatePizza(pizza: Pizza): void {
+    const newName = prompt("Neuer Name der Pizza", pizza.name);
+    if (newName) {
+      this.store.dispatch({
+        type: 'UPDATE', 
+        ...pizza,
+        name: newName,
+      });
+    }
+  }
 }
