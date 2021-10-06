@@ -1,0 +1,65 @@
+{
+  "pizza": [
+    {
+      "name": "Pizza Hawaii",
+      "price": 11.99,
+      "ingridients": [
+        "Käse",
+        "Schinken",
+        "Ananas",
+        "Tomatensoße"
+      ],
+      "id": 1
+    },
+    {
+      "name": "Pizza Salami",
+      "price": 7.99,
+      "ingridients": [
+        "Käse",
+        "Salami",
+        "Tomatensoße"
+      ],
+      "id": 2
+    },
+    {
+      "name": "Pizza Schinken",
+      "price": 8.99,
+      "ingridients": [
+        "Käse",
+        "Schinken",
+        "Tomatensoße"
+      ],
+      "id": 3
+    },
+    {
+      "name": "Pizze Speciale",
+      "price": 12.99,
+      "ingridients": [
+        "Käse",
+        "Salami",
+        "Schinken",
+        "Tomatensoße"
+      ],
+      "id": 4
+    },
+    {
+      "name": "Pizze Ananas (Veggi)",
+      "price": 6.99,
+      "ingridients": [
+        "Käse",
+        "Ananas",
+        "Tomatensoße"
+      ],
+      "id": 5
+    },
+    {
+      "name": "Pizza Margeritha",
+      "price": 4.99,
+      "ingridients": [
+        "Käse",
+        "Tomatensoße"
+      ],
+      "id": 6
+    }
+  ]
+}

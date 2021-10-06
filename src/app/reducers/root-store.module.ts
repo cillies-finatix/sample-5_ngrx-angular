@@ -2,8 +2,9 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EffectsModule } from "@ngrx/effects";
 import { StoreModule } from "@ngrx/store";
-import { PizzaStoreModule } from "./pizza/pizza-store.module";
 import { routerReducer, StoreRouterConnectingModule } from "@ngrx/router-store";
+import { EntityDataModule } from "@ngrx/data";
+import { entityMetadata, pluralNames } from "./metadata";
 
 @NgModule({
   imports: [
@@ -13,7 +14,10 @@ import { routerReducer, StoreRouterConnectingModule } from "@ngrx/router-store";
     }),
     EffectsModule.forRoot([]),
     StoreRouterConnectingModule.forRoot(),
-    PizzaStoreModule,
+    EntityDataModule.forRoot({
+        pluralNames,
+        entityMetadata,
+    }),
   ],
 })
 export class RootStoreModule {}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'fin-pizza',
@@ -8,11 +8,4 @@ import { Component, OnInit } from '@angular/core';
   styles: [
   ]
 })
-export class PizzaComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
+export class PizzaComponent {}

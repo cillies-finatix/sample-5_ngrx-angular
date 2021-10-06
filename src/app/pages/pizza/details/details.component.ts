@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, TrackByFunction } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { mergeMap } from 'rxjs/operators';
 import { State } from 'src/app/reducers';
+import { PizzenService } from 'src/app/reducers/pizza-entity.service';
 import { Pizza } from 'src/app/reducers/pizza/reducer';
-import { selectCurrentPizza } from 'src/app/reducers/pizza/selectors';
-import * as fromPizzaActions from '../../../reducers/pizza/actions';
+import { selectRouteParam } from 'src/app/reducers/router';
 
 @Component({
   selector: 'fin-details',
@@ -32,11 +33,10 @@ import * as fromPizzaActions from '../../../reducers/pizza/actions';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DetailsComponent {
-  pizza$ = this.store.select(selectCurrentPizza);
-  trackByName: TrackByFunction<Pizza> = (idx, item) => item.name;
-  constructor(private readonly store: Store<State>, private readonly router: Router) {}
+  pizza$ = this.store.select(selectRouteParam('pizzaId')).pipe(mergeMap(id => this.pizzenService.getByKey(id)));
+  constructor(private readonly pizzenService: PizzenService, private readonly store: Store<State>, private readonly router: Router) {}
   removePizza(pizza:Pizza): void {
-    this.store.dispatch(fromPizzaActions.remove(pizza));
+    this.pizzenService.delete(pizza);
     this.router.navigate(['pizza','overview']);
   }
 }

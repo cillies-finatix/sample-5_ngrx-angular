@@ -6,19 +6,23 @@ import { AppComponent } from './app.component';
 import { Store } from '@ngrx/store';
 import { State } from './reducers';
 import { ReactiveFormsModule } from '@angular/forms';
-import * as fromPizzaActions from './reducers/pizza/actions';
 import { RootStoreModule } from './reducers/root-store.module';
+import { HttpClientModule } from '@angular/common/http';
+import { PizzenService } from './reducers/pizza-entity.service';
 
-export function dispatchReadOnInit(store: Store<State>) {
+
+export function getAllOnInit(pizzenService: PizzenService) {
   return () => {
-    store.dispatch(fromPizzaActions.read());
+    pizzenService.getAll();
   };
 }
+
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
@@ -27,8 +31,8 @@ export function dispatchReadOnInit(store: Store<State>) {
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: dispatchReadOnInit,
-      deps: [Store],
+      useFactory: getAllOnInit,
+      deps: [PizzenService],
       multi: true
     }
   ],

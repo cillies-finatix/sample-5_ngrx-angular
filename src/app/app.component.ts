@@ -1,8 +1,6 @@
-import { ChangeDetectionStrategy, Component, TrackByFunction } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { State } from './reducers';
-import * as fromPizzaActions from './reducers/pizza/actions';
+import { PizzenService } from './reducers/pizza-entity.service';
 
 @Component({
   selector: 'fin-root',
@@ -52,10 +50,10 @@ export class AppComponent {
     "Tomatensoße",
   ];
   
-  constructor(private readonly store: Store<State>, private readonly fb: FormBuilder) {}
+  constructor(private readonly pizzenService: PizzenService, private readonly fb: FormBuilder) {}
   
   createPizza(): void {
-    this.store.dispatch(fromPizzaActions.create(this.createPizzaForm.value));
+    this.pizzenService.add(this.createPizzaForm.value);
     this.createPizzaForm.reset();
   }
 }
