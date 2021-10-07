@@ -20,20 +20,8 @@ export class PizzaEffectService {
     }))
   ));
 
-  create$ = createEffect(() => this.action$.pipe(
-    ofType(fromPizzaActions.PizzaAction.CREATE),
-    mergeMap(() => this.store.select(selectAllPizza)),
-    mergeMap((list) => from(this.savePizzas(list)))
-  ), { dispatch: false });
-
-  update$ = createEffect(() => this.action$.pipe(
-    ofType(fromPizzaActions.PizzaAction.UPDATE),
-    mergeMap(() => this.store.select(selectAllPizza)),
-    mergeMap((list) => from(this.savePizzas(list)))
-  ), { dispatch: false });
-
-  delete$ = createEffect(() => this.action$.pipe(
-    ofType(fromPizzaActions.PizzaAction.DELETE),
+  changes$ = createEffect(() => this.action$.pipe(
+    ofType(fromPizzaActions.PizzaAction.CREATE, fromPizzaActions.PizzaAction.UPDATE, fromPizzaActions.PizzaAction.DELETE),
     mergeMap(() => this.store.select(selectAllPizza)),
     mergeMap((list) => from(this.savePizzas(list)))
   ), { dispatch: false });
